@@ -7,3 +7,7 @@
 2. Content Analysis - detect sentiment 
 3. Recognize when you are excessively consuming similar topics 
 4. Check changes in behaviour patterens - escalating negativity
+
+
+Phases: 
+1. Make a browser extension 
