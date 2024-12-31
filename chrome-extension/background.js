@@ -1,14 +1,30 @@
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === "complete") {
-      console.log(`Tab updated: ${tab.url}`);
-    }
-  });
-  
-  chrome.history.onVisited.addListener((result) => {
-    chrome.storage.local.get(["activity"], (data) => {
-      let activity = data.activity || [];
-      activity.push(result.url);
-      chrome.storage.local.set({ activity });
+let currentTabId = null;
+let tabStartTime = null;
+let websiteData = [];
+
+chrome.tabs.onActivated.addListener((activeInfo) => {
+  if (currentTabId !== null) {
+    const timeSpent = Date.now() - tabStartTime;
+    websiteData.push({
+      url: lastUrl,
+      startTime: new Date(tabStartTime).toISOString(),
+      endTime: new Date().toISOString(),
+      timeSpent: timeSpent / 1000 // time in seconds
     });
-  });
-  
+  }
+
+  currentTabId = activeInfo.tabId;
+  tabStartTime = Date.now();
+});
+
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (tabId === currentTabId && changeInfo.status === 'complete') {
+    lastUrl = tab.url;
+  }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === 'getWebsiteData') {
+    sendResponse(websiteData);
+  }
+});

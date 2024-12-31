@@ -1,21 +1,28 @@
-document.addEventListener("DOMContentLoaded", () => {
-  chrome.storage.local.get(["activity"], (data) => {
-    let activityLog = data.activity || [];
-    document.getElementById("activity-log").innerText = activityLog.join("\n");
+document.addEventListener('DOMContentLoaded', function () {
+  const websiteList = document.getElementById('websiteList').getElementsByTagName('tbody')[0];
+  const downloadBtn = document.getElementById('downloadBtn');
+
+  chrome.runtime.sendMessage({ action: 'getWebsiteData' }, function (data) {
+    data.forEach((entry) => {
+      const row = websiteList.insertRow();
+      row.insertCell(0).textContent = entry.url;
+      row.insertCell(1).textContent = entry.startTime;
+      row.insertCell(2).textContent = entry.endTime;
+      row.insertCell(3).textContent = entry.timeSpent;
+    });
   });
 
-  // Handle file download
-  document.getElementById("download-button").addEventListener("click", () => {
-    chrome.storage.local.get(["activity"], (data) => {
-      let activityLog = data.activity || [];
-      let blob = new Blob([activityLog.join("\n")], { type: "text/plain" });
-      let url = URL.createObjectURL(blob);
-
-      let a = document.createElement("a");
+  downloadBtn.addEventListener('click', function () {
+    chrome.runtime.sendMessage({ action: 'getWebsiteData' }, function (data) {
+      const csvContent = 'URL,Start Time,End Time,Time Spent (s)\n' + data.map(e => `${e.url},${e.startTime},${e.endTime},${e.timeSpent}`).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
       a.href = url;
-      a.download = "activity_log.txt";  // File name
+      a.download = 'website_data.csv';
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);  // Clean up
+      document.body.removeChild(a);
     });
   });
 });

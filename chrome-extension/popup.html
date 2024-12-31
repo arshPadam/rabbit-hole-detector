@@ -1,17 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Activity Tracker</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Tracker</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 10px; }
-    #activity-log { white-space: pre-wrap; word-wrap: break-word; }
-    button { margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      width: 300px;
+      padding: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+    }
   </style>
 </head>
 <body>
-  <h2>Browser Activity</h2>
-  <div id="activity-log">No activity tracked yet.</div>
-  <button id="download-button">Download Activity Log</button>
+  <h2>Visited Websites</h2>
+  <table id="websiteList">
+    <thead>
+      <tr>
+        <th>URL</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Time Spent (s)</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <button id="downloadBtn">Download Data</button>
+
   <script src="popup.js"></script>
 </body>
 </html>
